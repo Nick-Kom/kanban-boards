@@ -13,9 +13,9 @@ const getBoards = firestoreDB =>
 
 const getBoardsContent = firestoreDB => (req, res) =>
   Promise.resolve(
-      getBoards(firestoreDB).then(servicesInformation =>
-          servicesInformation.docs.map(board => (board.data()))
-      )
+    getBoards(firestoreDB).then(servicesInformation =>
+      servicesInformation.docs.map(board => board.data())
+    )
   )
     .then(boards => res.send(boards))
     .catch(console.error);

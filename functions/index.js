@@ -32,6 +32,15 @@ const api = getExpress();
 
 // api.get("/boards/:userId", require("./boards").getBoardsContent(firestoreDB));
 api.get("/boards", require("./boards").getBoardsContent(firestoreDB));
+api.get(
+  "/columns/:boardId",
+  require("./columns").getColumnsContent(firestoreDB)
+);
+api.post("/add-column", require("./columns").addColumn(firestoreDB));
+api.delete(
+  "/delete-column/:boardId/:columnId",
+  require("./columns").deleteColumn(firestoreDB)
+);
 api.get("/board/add", require("./boards").addNewBoard(firestoreDB));
 
 exports.api = functions.https.onRequest(api);
