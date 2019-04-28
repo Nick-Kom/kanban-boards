@@ -40,11 +40,9 @@ export default {
   components: {
     Columns
   },
-  data() {
-    return {
-      boardId: 0
-    };
-  },
+  data: () => ({
+    boardId: 0
+  }),
   created() {
     this.boardId = this.$route.params.id;
     this.getColumns(this.boardId);
@@ -63,10 +61,10 @@ export default {
     getColumns(boardId) {
       this.$store.dispatch("getColumns", boardId);
     },
+
     scrollToHorizontal() {
       let column = {
         boardId: this.boardId,
-        id: "",
         date: new Date(),
         title: "Column №5"
       };

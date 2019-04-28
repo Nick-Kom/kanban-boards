@@ -31,7 +31,6 @@ const getExpress = () => {
 const api = getExpress();
 
 // api.get("/boards/:userId", require("./boards").getBoardsContent(firestoreDB));
-api.get("/boards", require("./boards").getBoardsContent(firestoreDB));
 api.get(
   "/columns/:boardId",
   require("./columns").getColumnsContent(firestoreDB)
@@ -41,6 +40,11 @@ api.delete(
   "/delete-column/:boardId/:columnId",
   require("./columns").deleteColumn(firestoreDB)
 );
+api.patch(
+  "/update-column",
+  require("./columns").updateColumnContent(firestoreDB)
+);
+api.get("/boards", require("./boards").getBoardsContent(firestoreDB));
 api.get("/board/add", require("./boards").addNewBoard(firestoreDB));
 
 exports.api = functions.https.onRequest(api);

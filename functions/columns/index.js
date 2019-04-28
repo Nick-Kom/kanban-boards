@@ -7,12 +7,30 @@ const getColumns = (firestoreDB, boardId) =>
     .get()
     .catch(console.error);
 
+const updateColumn = (firestoreDB, boardId, data) => {
+  let column = {
+    id: data.id,
+    date: data.date,
+    title: data.title
+  };
+
+  return firestoreDB
+    .collection("boards")
+    .doc(boardId)
+    .collection("boardColumns")
+    .doc(data.id)
+    .update(column)
+    .then(() => column)
+    .catch(console.error);
+};
+
 const addColumn = firestoreDB => (req, res) => {
   let column = {
     id: "",
     date: req.body.date,
     title: req.body.title
   };
+
   return firestoreDB
     .collection("boards")
     .doc(req.body.boardId)
@@ -20,12 +38,7 @@ const addColumn = firestoreDB => (req, res) => {
     .add(column)
     .then(columnRes => {
       column.id = columnRes.id;
-      firestoreDB
-        .collection("boards")
-        .doc(req.body.boardId)
-        .collection("boardColumns")
-        .doc(columnRes.id)
-        .update(column);
+      updateColumn(firestoreDB, req.body.boardId, column);
       res.send(column);
     })
     .catch(console.error);
@@ -51,8 +64,18 @@ const getColumnsContent = firestoreDB => (req, res) =>
     .then(columns => res.send(columns))
     .catch(console.error);
 
+const updateColumnContent = firestoreDB => (req, res) =>
+  Promise.resolve(
+    updateColumn(firestoreDB, req.body.boardId, req.body).then(
+      columnInformation => columnInformation
+    )
+  )
+    .then(column => res.send(column))
+    .catch(console.error);
+
 module.exports = {
   addColumn,
   deleteColumn,
-  getColumnsContent
+  getColumnsContent,
+  updateColumnContent
 };

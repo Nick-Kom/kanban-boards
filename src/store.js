@@ -36,6 +36,11 @@ export default new Vuex.Store({
     deleteColumnById(state, columnId) {
       state.columns = state.columns.filter(obj => obj.id !== columnId);
     },
+    updateColumn(state, newColumn) {
+      state.columns = state.columns.map(item =>
+        item.id === newColumn.id ? (item = newColumn) : item
+      );
+    },
     setProgress(state, payload) {
       state.loadProgress = payload;
     }
@@ -75,6 +80,18 @@ export default new Vuex.Store({
           console.log("Col response.data", response.data);
           commit("addColumn", response.data);
           Promise.resolve(true);
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    },
+
+    updateColumn({ dispatch, commit }, data) {
+      return Vue.axios
+        .patch(backend("/api/update-column"), data)
+        .then(response => {
+          console.log("Col response.data updated", response.data);
+          commit("updateColumn", response.data);
         })
         .catch(error => {
           console.error(error);
