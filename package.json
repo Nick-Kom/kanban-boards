@@ -7,7 +7,7 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "setup-functions": "cd functions && npm install",
-    "functions": "firebase serve --only functions"
+    "functions": "firebase serve --only functions --port 5001"
   },
   "dependencies": {
     "axios": "^0.18.0",

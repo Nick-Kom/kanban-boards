@@ -1,25 +1,12 @@
 const functions = require("firebase-functions");
 
-exports.helloWorld = functions.https.onRequest((request, response) => {
-  response.send("this is first test of firebase-functions");
-});
-
 const cors = require("cors")();
 const express = require("express");
-// const { Nuxt } = require('nuxt')
 
 const admin = require("firebase-admin");
 admin.initializeApp(functions.config().firestore);
 
 const firestoreDB = admin.firestore();
-
-/* firestoreDB.collection("boards").get().then((querySnapshot) => {
- querySnapshot.forEach((doc) => {
-  console.log('board: ', doc.data());
-
- });
-});
-*/
 
 const getExpress = () => {
   const newExpress = express();

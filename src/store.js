@@ -2,9 +2,7 @@ import Vue from "vue";
 import Vuex from "vuex";
 
 Vue.use(Vuex);
-
-const backend = api =>
-  "http://localhost:5000/kanban-boards-55/us-central1" + api;
+const backend = api => process.env.VUE_APP_FUNCTIONS + api;
 
 export default new Vuex.Store({
   state: {
