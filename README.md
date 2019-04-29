@@ -3,6 +3,7 @@
 ## Project setup
 ```
 npm install
+npm run setup-functions
 ```
 
 ### Compiles and hot-reloads for development
@@ -14,10 +15,9 @@ npm run serve
 ```
 npm run build
 ```
-
-### Run your tests
+### Cloud functions firebase
 ```
-npm run test
+npm run functions
 ```
 
 ### Lints and fixes files
@@ -25,5 +25,4 @@ npm run test
 npm run lint
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+ 
