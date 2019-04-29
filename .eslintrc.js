@@ -12,6 +12,7 @@ module.exports = {
 			}
 		],
 		"vue/no-v-html": 0,
+		"vue/require-v-for-key": 0,
 		"vue/require-prop-types": 0,
 		"vue/require-default-prop": 0,
 		quotes: [1, "double", "avoid-escape"]
@@ -19,5 +20,7 @@ module.exports = {
 	parserOptions: {
 		ecmaVersion: 2017,
 		sourceType: "module"
-	}
+	},
+	extends: [ "plugin:vue/essential", "plugin:vue/recommended"],
+	parser: "babel-eslint"
 }

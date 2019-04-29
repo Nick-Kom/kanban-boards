@@ -7,7 +7,11 @@
       id="horizontal-container"
       style=" height: 100%;  overflow-x: auto;"
     >
-      <Columns :columns="columns" :boardId="boardId" />
+      <Columns
+        :boardId="boardId"
+        :showNewColumn="showNewColumn"
+        @hide-column="showNewColumn = false"
+      />
       <div
         v-if="!progress && !columns.length"
         style="width: 100%; text-align: center"
@@ -41,7 +45,8 @@ export default {
     Columns
   },
   data: () => ({
-    boardId: 0
+    boardId: 0,
+    showNewColumn: false
   }),
   created() {
     this.boardId = this.$route.params.id;
@@ -63,15 +68,22 @@ export default {
     },
 
     scrollToHorizontal() {
-      let column = {
+      this.showNewColumn = true;
+      setTimeout(() => {
+        let scroll_container = document.getElementById("horizontal-container");
+        scroll_container.scrollLeft = 9990;
+      }, 20);
+
+      /*  let column = {
         boardId: this.boardId,
         date: new Date(),
         title: "Column №5"
       };
+
       this.$store.dispatch("addNewColumn", column).then(res => {
         let scroll_container = document.getElementById("horizontal-container");
         scroll_container.scrollLeft = 9990;
-      });
+      }); */
     }
   }
 };

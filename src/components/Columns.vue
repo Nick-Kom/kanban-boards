@@ -1,51 +1,96 @@
 <template>
-  <div style="display: flex" v-if="columns">
-    <div v-for="(column, index) in columns" :key="index">
-      <v-card
-        v-if="columns"
-        class="pa-3 ma-2"
-        style="width: 250px; min-height: 300px"
-      >
-        <v-card-title primary-title>
-          <div class="pa-3 headline d-flex flex justify-center" v-if="false">
-            {{ column.title }}
+  <div>
+    <draggable
+      v-model="columns"
+      draggable=".drag-column"
+      style="display: flex"
+      v-if="columns"
+    >
+      <div v-for="(column, index) in columns" :key="index" class="drag-column">
+        <v-card
+          v-if="columns"
+          class="pa-3 ma-2"
+          style="width: 250px; min-height: 300px"
+        >
+          <div class="column-menu" style="position: relative">
+            <v-spacer></v-spacer>
+            <v-btn class="ma-0" icon @click="deleteColumn(column.id)">
+              <v-icon>clear</v-icon>
+            </v-btn>
           </div>
-          <v-form v-else>
-            <v-text-field
-              class="column-title-input ma-0"
-              color="blue"
-              v-model="column.title"
-              :outline="!showColumnTitle[index]"
-              :readonly="!showColumnTitle[index]"
-              @blur="$set(showColumnTitle, index, false)"
-              @click="$set(showColumnTitle, index, true)"
-              @click:append="updateColumn(index, column.title, column)"
-              :append-icon="showColumnTitle[index] ? 'save' : ''"
-            ></v-text-field>
-          </v-form>
-          {{ columnTitle }}
-        </v-card-title>
-        <v-flex>
-          <v-text-field value="Card" solo readonly></v-text-field>
-        </v-flex>
-        <v-btn dark color="red" @click="deleteColumn(column.id)">
-          <v-icon dark>delete</v-icon>
-        </v-btn>
-      </v-card>
-    </div>
+          <v-card-title primary-title class=" pt-0">
+            <v-form>
+              <v-text-field
+                class="column-title-input ma-0"
+                color="blue"
+                v-model="column.title"
+                :outline="!showColumnTitle[index]"
+                :readonly="!showColumnTitle[index]"
+                @blur="$set(showColumnTitle, index, false)"
+                @click="$set(showColumnTitle, index, true)"
+                @click:append="updateColumn(index, column.title, column)"
+                :append-icon="showColumnTitle[index] ? 'save' : ''"
+              ></v-text-field>
+            </v-form>
+          </v-card-title>
+          <Cards :columnId="column.id" :boardId="boardId"></Cards>
+        </v-card>
+      </div>
+      <div v-if="showNewColumn">
+        <v-card class="pa-3 ma-2" style="width: 250px;">
+          <v-card-title primary-title>
+            <v-form>
+              <v-text-field
+                autofocus
+                class="column-title-input ma-0"
+                color="blue"
+                v-model="newColumnTitle"
+                @click:append="createColumn(newColumnTitle)"
+                @blur="$emit('hide-column', false)"
+                append-icon="save"
+              ></v-text-field>
+            </v-form>
+          </v-card-title>
+        </v-card>
+      </div>
+    </draggable>
   </div>
 </template>
 
 <script>
+import draggable from "vuedraggable";
+import Cards from "@/components/Cards.vue";
 export default {
+  components: {
+    Cards,
+    draggable
+  },
   props: {
-    columns: Array,
-    boardId: String
+    boardId: String,
+    showNewColumn: Boolean
   },
   data: () => ({
-    columnTitle: "",
+    newColumnTitle: "",
     showColumnTitle: []
   }),
+
+  computed: {
+    columns: {
+      get() {
+        return this.$store.getters.columns;
+      },
+      set(dragColumns) {
+        let columnsWithNewPositions = dragColumns.map((column, index) => {
+          column.position = index;
+          column.boardId = this.boardId;
+
+          this.$store.dispatch("updateColumn", column);
+          return column;
+        });
+        this.$store.commit("setColumns", columnsWithNewPositions);
+      }
+    }
+  },
 
   created() {
     this.showColumnTitle = this.columns.map(item => false);
@@ -64,10 +109,35 @@ export default {
         boardId: this.boardId,
         id: column.id,
         date: column.date,
-        title: newTitle
+        title: newTitle,
+        position: column.position
       };
       this.$store.dispatch("updateColumn", data);
       this.$set(this.showColumnTitle, index, false);
+    },
+
+    createColumn(newTitle) {
+      let newPosition;
+      let lastColumnIndex = this.columns.length - 1;
+
+      if (lastColumnIndex >= 0) {
+        newPosition = lastColumnIndex + 1;
+      } else {
+        newPosition = 0;
+      }
+
+      let data = {
+        boardId: this.boardId,
+        date: new Date(),
+        title: newTitle,
+        position: newPosition
+      };
+      this.$store.dispatch("addNewColumn", data).then(res => {
+        this.$emit("hide-column");
+        let scroll_container = document.getElementById("horizontal-container");
+        scroll_container.scrollLeft = 9990;
+        this.newColumnTitle = "";
+      });
     }
   }
 };
@@ -106,5 +176,9 @@ export default {
       margin-top: 14px;
     }
   }
+}
+
+.column-menu {
+  display: flex;
 }
 </style>

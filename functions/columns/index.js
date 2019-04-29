@@ -3,7 +3,7 @@ const getColumns = (firestoreDB, boardId) =>
     .collection("boards")
     .doc(boardId)
     .collection("boardColumns")
-    .orderBy("date")
+    .orderBy("position")
     .get()
     .catch(console.error);
 
@@ -11,7 +11,8 @@ const updateColumn = (firestoreDB, boardId, data) => {
   let column = {
     id: data.id,
     date: data.date,
-    title: data.title
+    title: data.title,
+    position: data.position
   };
 
   return firestoreDB
@@ -28,7 +29,8 @@ const addColumn = firestoreDB => (req, res) => {
   let column = {
     id: "",
     date: req.body.date,
-    title: req.body.title
+    title: req.body.title,
+    position: req.body.position
   };
 
   return firestoreDB
