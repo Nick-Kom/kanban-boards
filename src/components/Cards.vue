@@ -1,6 +1,12 @@
 <template>
   <div>
-    <draggable v-model="cards" draggable=".drag-card">
+    <draggable
+      :key="columnId"
+      v-model="cards"
+      v-bind="dragOptions"
+      handle=".drag-card"
+      @change="changeCardPosition($event, columnId)"
+    >
       <v-flex
         class="card mt-1 mb-1 drag-card"
         v-for="(card, index) in cards"
@@ -77,6 +83,13 @@ export default {
   }),
 
   computed: {
+    dragOptions() {
+      return {
+        group: "column-cards",
+        animation: 200
+      };
+    },
+
     cards: {
       get() {
         return this.$store.getters.cards.filter(
@@ -90,8 +103,6 @@ export default {
         let cardsWithNewPositions = dragCards.map((card, index) => {
           card.position = index;
           card.boardId = this.boardId;
-
-          this.$store.dispatch("updateCard", card);
           return card;
         });
 
@@ -105,6 +116,36 @@ export default {
     this.getCards(this.boardId);
   },
   methods: {
+    changeCardPosition(event, colId) {
+      if (Object.keys(event)[0] === "added") {
+        let addedCard = event.added.element;
+        let data = {
+          boardId: this.boardId,
+          id: addedCard.id,
+          columnId: colId,
+          position: event.added.newIndex,
+          title: addedCard.title
+        };
+        this.$store.dispatch("addNewCard", data);
+      } else if (Object.keys(event)[0] === "removed") {
+        let removedCard = event.removed.element;
+
+        this.deleteCard(removedCard.id);
+      } else {
+        let dragCards = this.$store.getters.cards.filter(
+          card => card.columnId === this.columnId
+        );
+
+        dragCards.map((card, index) => {
+          card.position = index;
+          card.boardId = this.boardId;
+
+          this.$store.dispatch("updateCard", card);
+          return card;
+        });
+      }
+    },
+
     getCards(boardId) {
       this.$store.dispatch("getCards", boardId);
     },

@@ -2,13 +2,15 @@
   <div>
     <draggable
       v-model="columns"
-      draggable=".drag-column"
+      handle=".drag-column"
       class="column-wrap"
       v-if="columns"
     >
-      <div v-for="(column, index) in columns" :key="index" class="drag-column">
+      <div v-for="(column, index) in columns" :key="index">
         <v-card v-if="columns" class="column-item pa-3 ma-2">
           <div class="column-header">
+            <v-icon class="drag-column">drag_handle</v-icon>
+
             <v-spacer></v-spacer>
             <v-btn class="ma-0" icon @click="deleteColumn(column.id)">
               <v-icon>clear</v-icon>
@@ -140,6 +142,9 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.drag-column {
+  cursor: grab;
+}
 .column-wrap {
   display: flex;
 }
