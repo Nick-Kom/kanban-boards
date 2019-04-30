@@ -58,20 +58,13 @@ const deleteCard = firestoreDB => (req, res) => {
 };
 
 const getCardsContent = firestoreDB => (req, res) =>
-  Promise.resolve(
-    getCards(firestoreDB, req.params.boardId).then(cardsInformation =>
-      cardsInformation.docs.map(card => card.data())
-    )
-  )
+  getCards(firestoreDB, req.params.boardId)
+    .then(cardsInformation => cardsInformation.docs.map(card => card.data()))
     .then(cards => res.send(cards))
     .catch(console.error);
 
 const updateCardContent = firestoreDB => (req, res) =>
-  Promise.resolve(
-    updateCard(firestoreDB, req.body.boardId, req.body).then(
-      cardInformation => cardInformation
-    )
-  )
+  updateCard(firestoreDB, req.body.boardId, req.body)
     .then(card => res.send(card))
     .catch(console.error);
 

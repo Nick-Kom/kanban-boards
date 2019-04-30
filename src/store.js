@@ -35,27 +35,11 @@ export default new Vuex.Store({
     addColumn(state, payload) {
       state.columns.push(payload);
     },
-    deleteColumnById(state, columnId) {
-      state.columns = state.columns.filter(obj => obj.id !== columnId);
-    },
-    deleteCardById(state, cardId) {
-      state.cards = state.cards.filter(obj => obj.id !== cardId);
-    },
-    updateColumn(state, newColumn) {
-      state.columns = state.columns.map(item =>
-        item.id === newColumn.id ? (item = newColumn) : item
-      );
-    },
     setProgress(state, payload) {
       state.loadProgress = payload;
     },
     setCards(state, payload) {
       state.cards = payload;
-    },
-    updateCard(state, newCard) {
-      state.cards = state.cards.map(item =>
-        item.id === newCard.id ? (item = newCard) : item
-      );
     },
     addCard(state, payload) {
       state.cards.push(payload);
@@ -64,10 +48,9 @@ export default new Vuex.Store({
 
   actions: {
     getBoards({ dispatch, commit }) {
-      return Vue.axios
+      Vue.axios
         .get(backend("/api/boards"))
         .then(boards => {
-          console.log(boards.data);
           commit("setBoards", boards.data);
         })
         .catch(error => {
@@ -77,10 +60,9 @@ export default new Vuex.Store({
 
     getColumns({ dispatch, commit }, boardId) {
       commit("setProgress", true);
-      return Vue.axios
+      Vue.axios
         .get(backend(`/api/columns/${boardId}`))
         .then(columns => {
-          console.log(columns.data);
           commit("setProgress", false);
           commit("setColumns", columns.data);
         })
@@ -93,33 +75,37 @@ export default new Vuex.Store({
       return Vue.axios
         .post(backend("/api/add-column"), column)
         .then(response => {
-          console.log("Col response.data", response.data);
           commit("addColumn", response.data);
-          Promise.resolve(true);
         })
         .catch(error => {
           console.error(error);
         });
     },
 
-    updateColumn({ dispatch, commit }, data) {
-      return Vue.axios
+    updateColumn({ dispatch, commit, state }, data) {
+      Vue.axios
         .patch(backend("/api/update-column"), data)
         .then(response => {
-          console.log("Col response.data updated", response.data);
-          commit("updateColumn", response.data);
+          let updatedColumns = state.columns.map(item =>
+            item.id === response.data.id ? (item = response.data) : item
+          );
+
+          commit("setColumns", updatedColumns);
         })
         .catch(error => {
           console.error(error);
         });
     },
 
-    deleteColumn({ dispatch, commit }, data) {
+    deleteColumn({ dispatch, commit, state }, data) {
       Vue.axios
         .delete(backend(`/api/delete-column/${data.boardId}/${data.columnId}`))
         .then(response => {
-          console.log("Col deleted data", response.data);
-          commit("deleteColumnById", data.columnId);
+          let updatedColumns = state.columns.filter(
+            obj => obj.id !== data.columnId
+          );
+
+          commit("setColumns", updatedColumns);
         })
         .catch(error => {
           console.error(error);
@@ -127,10 +113,9 @@ export default new Vuex.Store({
     },
 
     getCards({ dispatch, commit }, boardId) {
-      return Vue.axios
+      Vue.axios
         .get(backend(`/api/cards/${boardId}`))
         .then(cards => {
-          console.log(cards.data);
           commit("setCards", cards.data);
         })
         .catch(error => {
@@ -138,12 +123,15 @@ export default new Vuex.Store({
         });
     },
 
-    updateCard({ dispatch, commit }, data) {
-      return Vue.axios
+    updateCard({ dispatch, commit, state }, data) {
+      Vue.axios
         .patch(backend("/api/update-card"), data)
         .then(response => {
-          console.log("Card response.data updated", response.data);
-          commit("updateCard", response.data);
+          let updatedCards = state.cards.map(item =>
+            item.id === response.data.id ? (item = response.data) : item
+          );
+
+          commit("setCards", updatedCards);
         })
         .catch(error => {
           console.error(error);
@@ -154,21 +142,20 @@ export default new Vuex.Store({
       return Vue.axios
         .post(backend("/api/add-card"), column)
         .then(response => {
-          console.log("Card response.data", response.data);
           commit("addCard", response.data);
-          Promise.resolve(true);
         })
         .catch(error => {
           console.error(error);
         });
     },
 
-    deleteCard({ dispatch, commit }, data) {
+    deleteCard({ dispatch, commit, state }, data) {
       Vue.axios
         .delete(backend(`/api/delete-card/${data.boardId}/${data.cardId}`))
         .then(response => {
-          console.log("Card deleted data", response.data);
-          commit("deleteCardById", data.cardId);
+          let updatedCards = state.cards.filter(obj => obj.id !== data.cardId);
+
+          commit("setCards", updatedCards);
         })
         .catch(error => {
           console.error(error);

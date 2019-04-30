@@ -58,20 +58,15 @@ const deleteColumn = firestoreDB => (req, res) => {
 };
 
 const getColumnsContent = firestoreDB => (req, res) =>
-  Promise.resolve(
-    getColumns(firestoreDB, req.params.boardId).then(columnsInformation =>
+  getColumns(firestoreDB, req.params.boardId)
+    .then(columnsInformation =>
       columnsInformation.docs.map(column => column.data())
     )
-  )
     .then(columns => res.send(columns))
     .catch(console.error);
 
 const updateColumnContent = firestoreDB => (req, res) =>
-  Promise.resolve(
-    updateColumn(firestoreDB, req.body.boardId, req.body).then(
-      columnInformation => columnInformation
-    )
-  )
+  updateColumn(firestoreDB, req.body.boardId, req.body)
     .then(column => res.send(column))
     .catch(console.error);
 

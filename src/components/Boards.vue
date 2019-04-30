@@ -13,11 +13,11 @@
           <div class="headline d-flex flex justify-center">
             {{ board.title }}
           </div>
-        </v-card-title></v-card
-      >
+        </v-card-title>
+      </v-card>
 
       <v-progress-circular
-        v-if="boards.length === 0"
+        v-if="!boards.length"
         :width="5"
         color="#80deea"
         :size="80"

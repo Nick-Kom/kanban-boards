@@ -3,16 +3,12 @@
     <draggable
       v-model="columns"
       draggable=".drag-column"
-      style="display: flex"
+      class="column-wrap"
       v-if="columns"
     >
       <div v-for="(column, index) in columns" :key="index" class="drag-column">
-        <v-card
-          v-if="columns"
-          class="pa-3 ma-2"
-          style="width: 250px; min-height: 300px"
-        >
-          <div class="column-menu" style="position: relative">
+        <v-card v-if="columns" class="column-item pa-3 ma-2">
+          <div class="column-header">
             <v-spacer></v-spacer>
             <v-btn class="ma-0" icon @click="deleteColumn(column.id)">
               <v-icon>clear</v-icon>
@@ -21,34 +17,34 @@
           <v-card-title primary-title class=" pt-0">
             <v-form>
               <v-text-field
+                v-model="column.title"
                 class="column-title-input ma-0"
                 color="blue"
-                v-model="column.title"
                 :outline="!showColumnTitle[index]"
                 :readonly="!showColumnTitle[index]"
+                :append-icon="showColumnTitle[index] ? 'save' : ''"
                 @blur="$set(showColumnTitle, index, false)"
                 @click="$set(showColumnTitle, index, true)"
                 @click:append="updateColumn(index, column.title, column)"
-                :append-icon="showColumnTitle[index] ? 'save' : ''"
-              ></v-text-field>
+              />
             </v-form>
           </v-card-title>
-          <Cards :columnId="column.id" :boardId="boardId"></Cards>
+          <Cards :columnId="column.id" :boardId="boardId" />
         </v-card>
       </div>
       <div v-if="showNewColumn">
-        <v-card class="pa-3 ma-2" style="width: 250px;">
+        <v-card class="new-column pa-3 ma-2">
           <v-card-title primary-title>
             <v-form>
               <v-text-field
+                v-model="newColumnTitle"
                 autofocus
                 class="column-title-input ma-0"
                 color="blue"
-                v-model="newColumnTitle"
+                append-icon="save"
                 @click:append="createColumn(newColumnTitle)"
                 @blur="$emit('hide-column', false)"
-                append-icon="save"
-              ></v-text-field>
+              />
             </v-form>
           </v-card-title>
         </v-card>
@@ -144,6 +140,19 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.column-wrap {
+  display: flex;
+}
+
+.column-item {
+  width: 250px;
+  min-height: 300px;
+}
+
+.new-column {
+  width: 250px;
+}
+
 .column-title-input {
   height: 70px;
 }
@@ -178,7 +187,7 @@ export default {
   }
 }
 
-.column-menu {
+.column-header {
   display: flex;
 }
 </style>

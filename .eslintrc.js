@@ -17,10 +17,5 @@ module.exports = {
 		"vue/require-default-prop": 0,
 		quotes: [1, "double", "avoid-escape"]
 	},
-	parserOptions: {
-		ecmaVersion: 2017,
-		sourceType: "module"
-	},
-	extends: [ "plugin:vue/essential", "plugin:vue/recommended"],
-	parser: "babel-eslint"
+	extends: ["plugin:vue/recommended"]
 }
