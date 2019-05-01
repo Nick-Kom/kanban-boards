@@ -13,6 +13,11 @@ export default {
   name: "home",
   components: {
     Boards
+  },
+  created() {
+    if ((this.boardId = this.$route.path === "/")) {
+      this.$store.commit("setColumns", []);
+    }
   }
 };
 </script>

@@ -126,13 +126,7 @@ export default new Vuex.Store({
     updateCard({ dispatch, commit, state }, data) {
       Vue.axios
         .patch(backend("/api/update-card"), data)
-        .then(response => {
-          let updatedCards = state.cards.map(item =>
-            item.id === response.data.id ? (item = response.data) : item
-          );
-
-          commit("setCards", updatedCards);
-        })
+        .then(response => response)
         .catch(error => {
           console.error(error);
         });

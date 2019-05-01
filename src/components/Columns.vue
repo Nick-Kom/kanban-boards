@@ -92,8 +92,13 @@ export default {
 
   created() {
     this.showColumnTitle = this.columns.map(item => false);
+    this.getCards(this.boardId);
   },
   methods: {
+    getCards(boardId) {
+      this.$store.dispatch("getCards", boardId);
+    },
+
     deleteColumn(columnId) {
       let data = {
         columnId: columnId,

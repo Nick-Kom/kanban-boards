@@ -97,28 +97,39 @@ export default {
         );
       },
       set(dragCards) {
-        let anotherCards = this.$store.getters.cards.filter(
-          card => card.columnId !== this.columnId
-        );
+        // here executed draggable changing column of card and positions of cards
         let cardsWithNewPositions = dragCards.map((card, index) => {
           card.position = index;
           card.boardId = this.boardId;
+          if (card.columnId !== this.columnId) {
+            card.columnId = this.columnId;
+          }
+
+          this.$store.dispatch("updateCard", card);
           return card;
         });
 
-        let allCards = cardsWithNewPositions.concat(anotherCards);
+        let allCards = cardsWithNewPositions.concat(this.anotherCards());
         this.$store.commit("setCards", allCards);
       }
     }
   },
 
   created() {
-    this.getCards(this.boardId);
+    this.showCardTitle = this.cards.map(item => false);
   },
+
   methods: {
+    anotherCards() {
+      return this.$store.getters.cards.filter(
+        card => card.columnId !== this.columnId
+      );
+    },
+
     changeCardPosition(event, colId) {
-      if (Object.keys(event)[0] === "added") {
+      /*      if (Object.keys(event)[0] === "added") {
         let addedCard = event.added.element;
+
         let data = {
           boardId: this.boardId,
           id: addedCard.id,
@@ -126,29 +137,26 @@ export default {
           position: event.added.newIndex,
           title: addedCard.title
         };
-        this.$store.dispatch("addNewCard", data);
-      } else if (Object.keys(event)[0] === "removed") {
-        let removedCard = event.removed.element;
 
-        this.deleteCard(removedCard.id);
-      } else {
-        let dragCards = this.$store.getters.cards.filter(
-          card => card.columnId === this.columnId
-        );
+        this.cards.splice(event.added.newIndex, 0, data);
 
-        dragCards.map((card, index) => {
-          card.position = index;
-          card.boardId = this.boardId;
+        let cardsWithNewPositions = this.druggedCardsUpdate();
 
-          this.$store.dispatch("updateCard", card);
-          return card;
-        });
-      }
+        let allCards = cardsWithNewPositions.concat(this.anotherCards());
+        this.$store.commit("setCards", allCards);
+      } else if (Object.keys(event)[0] === "moved") {
+        this.druggedCardsUpdate();
+      }*/
     },
 
-    getCards(boardId) {
-      this.$store.dispatch("getCards", boardId);
-    },
+    /*    druggedCardsUpdate() {
+      return this.cards.map((card, index) => {
+        card.position = index;
+        card.boardId = this.boardId;
+        this.$store.dispatch("updateCard", card);
+        return card;
+      });
+    },*/
 
     updateCard(index, newTitle, сard) {
       let data = {
